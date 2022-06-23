@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+    padding: 5%;
+    margin: 0vw;
+    border: 0vw;
+    gap: 0vw;
+}
+
+#backing-canvas {
+    position: fixed;
+    left: 0vw;
+    top: 0vw;
+
+    z-index: -1;
+}
+
+#todo-page {
+    position: relative;
+    width: min-content;
+    height: min-content;
+
+    /* Dark Grey */
+
+    background: #141A26;
+}
+
+#todo-content {
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: flex-start;
+    padding: 0vw;
+    gap: 14vw;
+}
+
+.header-bar {
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0vw;
+    gap: 4vw;
+
+    width: fit-content;
+    height: 15vw;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.profile-pic-wrapper {
+    width: 10vw;
+    height: 10vw;
+    
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.profile-pic {
+    box-sizing: border-box;
+
+    width: 10vw;
+    height: 10vw;
+
+    /* Light Accent */
+
+    border: 1vw solid #8679D9;
+    border-radius: 5vw;
+}
+
+.checkbox {
+    width: 5vw;
+    height: 5vw;
+    border: 1vw solid #8679D9;
+    border-radius: 5vw;
+
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+
+    flex: 0 0 auto; /*I have literally no idea why this works but thanks stack overflow i guess*/
+}
+
+.checkbox:hover {
+    cursor: pointer;
+}
+
+.title-message {
+    width: max-content;
+    height: fit-content;
+    
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 5vw;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.005em;
+    
+    /* White */
+    
+    color: #FFFFFF;
+    
+    text-shadow: 0vw 0.5vw 0.5vw rgba(0, 0, 0, 0.25);
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.title-wrapper {
+    /* Auto layout */
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    padding: 0.5vw 2vw;
+    
+    width: fit-content;
+    height: 10vw;
+    
+    background: rgba(134, 121, 217, 0.2);
+    border-radius: 2vw 9vw 9vw 2vw;
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.list-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    gap: 7vw;
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.list-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    gap: 7vw;
+
+    transition: max-height 0.2s ease-out;
+    max-height: fit-content;
+    overflow: hidden;
+}
+
+.list-title {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 4.5vw;
+    color: white;
+
+    width: fit-content;
+    padding-left: 3vw;
+    padding-right: 2.5vw;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+
+    border-radius: 1vw;
+
+    background-color: #5833A6;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 3.5vw;
+}
+
+.task-title {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 4vw;
+    color: #141A26;
+
+    background-color: #8679D9;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+
+    border-radius: 0vw 2vw 2vw 2vw;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 6vw;
+}
+
+.list-item {
+    background-color: transparent;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 6vw;
+}
+
+.list-add {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.task-add {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 4vw;
+
+    padding-left: 1vw;
+    /* identical to box height */
+    
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.005em;
+    border-radius: 0vw 2vw 2vw 2vw;
+    border: 1vw solid #8679D9;
+    
+    /* Light Grey */
+    
+    background-color: #FFFFFF;
+    
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    /* Yucky focus outline begone */
+    outline: none;
+}
+
+.dropdown-chevron {
+    width: 5vw;
+    height: auto;
+
+    transition: transform 0.2s ease-out;
+}
+
+.task-add::placeholder {
+    color: #2E3D59AA;
+}
