@@ -251,7 +251,7 @@ body {
     flex-direction: row;
     justify-content: left;
     align-items: center;
-    gap: 6vw;
+    gap: 3vw;
 }
 
 .list-item {
@@ -355,4 +355,12 @@ body {
 
 .task-add::placeholder {
     color: #2E3D59AA;
+}
+
+.delete-button {
+    width: 3vw;
+    height: 3vw;
+    background-color: #ffffff33;
+    padding: 0.8vw;
+    border-radius: 1.2vw;
 }

@@ -39,7 +39,12 @@ window.onload = function() {
                 newCheckbox.className = "checkbox";
                 const newTaskTitle = document.createElement("div");
                 newTaskTitle.className = "task-title";
-                newTaskTitle.innerHTML = element.value;
+                const newDeleteButton = document.createElement("img");
+                newDeleteButton.src = "delete.png";
+                newDeleteButton.className = "delete-button";
+
+                newTaskTitle.appendChild(newDeleteButton);
+                newDeleteButton.insertAdjacentHTML("beforeBegin", element.value);
 
                 newListItem.appendChild(newCheckbox);
                 newListItem.appendChild(newTaskTitle);
