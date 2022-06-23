@@ -5,26 +5,32 @@ Number.prototype.map = function (in_min, in_max, out_min, out_max) {
 
 let isInEditMode = false;
 
+function Vector2(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 window.onload = function() {
     // Spooky global-ish variables
     let taskStates = [];
     let listCollapsedStates = [];
     let todoContent = document.getElementById("todo-content");
     let deleteButtons = document.getElementsByClassName("delete-button");
+    let tasks = document.getElementsByClassName("checkbox");
 
     function addCheckboxListener(element) {
         taskStates.push({state: false, link: element});
-        let i = taskStates.length - 1;
 
-        element.addEventListener("click", function() {
-            element.style.transition = "all 0.2s"
+        element.addEventListener("click", function(e) {
+            let i = taskStates.findIndex(x => x.link == element);
+            e.target.style.transition = "all 0.2s";
             if (taskStates[i].state) {
-                element.style.borderColor = "#8679D9";
-                element.style.backgroundColor = "transparent"
+                e.target.style.borderColor = "#8679D9";
+                e.target.style.backgroundColor = "transparent";
             }
             else {
-                element.style.borderColor = "#5833A6";
-                element.style.backgroundColor = "#8679D9"
+                e.target.style.borderColor = "#5833A6";
+                e.target.style.backgroundColor = "#8679D9"
             }
             taskStates[i].state = !taskStates[i].state;
         });
@@ -45,7 +51,7 @@ window.onload = function() {
                 const newDeleteButton = document.createElement("img");
                 newDeleteButton.src = "delete.png";
                 newDeleteButton.className = "delete-button";
-                newDeleteButton.style.display = "none";
+                newDeleteButton.style.display = isInEditMode ? "block" : "none";
 
                 newTaskTitle.appendChild(newDeleteButton);
                 newDeleteButton.insertAdjacentHTML("beforeBegin", element.value);
@@ -59,6 +65,7 @@ window.onload = function() {
 
                 // Update taskStates and stuff
                 addCheckboxListener(newCheckbox);
+                addDeletionListener(newDeleteButton);
                 let delta = element.parentElement.parentElement.scrollHeight - parseFloat(element.parentElement.parentElement.style.maxHeight, 10);
                 element.parentElement.parentElement.style.maxHeight = element.parentElement.parentElement.scrollHeight + "px";
                 todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
@@ -85,16 +92,27 @@ window.onload = function() {
 
             group.style.maxHeight = newHeight + "px";
 
-            let delta = newHeight - origHeight;
+            const delta = newHeight - origHeight;
             todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
 
             listCollapsedStates[i].state = !listCollapsedStates[i].state;
         });
     }
 
-    // Task Checkboxes
-    let tasks = document.getElementsByClassName("checkbox");
+    function addDeletionListener(element) {
+        element.addEventListener("click", function (e) {
+            const j = taskStates.indexOf(e.target);
+            const group = e.target.parentElement.parentElement.parentElement;
 
+            e.target.parentElement.parentElement.remove();
+
+            group.style.maxHeight = group.scrollHeight;
+            todoContent.style.maxHeight = todoContent.scrollHeight + "px";
+            taskStates.splice(j, 1);
+        });
+    }
+
+    // Task Checkboxes
     for (let i = 0; i < tasks.length; i++) {
         addCheckboxListener(tasks[i]);
     }
@@ -179,16 +197,29 @@ window.onload = function() {
     
     editButton.addEventListener("click", function() {
         for (let i = 0; i < deleteButtons.length; i++) {
-            deleteButtons[i].style.display = deleteButtons[i].style.display == "none" ? "block" : "none";
+            deleteButtons[i].style.display = isInEditMode ? "none" : "block";
         }
-        console.log(deleteButtons);
+        isInEditMode = !isInEditMode
     });
+
+    // Delete items
+    for (let i = 0; i < deleteButtons.length; i++) {
+        addDeletionListener(deleteButtons[i]);
+    }
 
     // Stars Background
     let canvas = document.getElementById("backing-canvas");
 
     /** @type {CanvasRenderingContext2D} */
     let ctx = canvas.getContext("2d");
+
+    function Star(position, radius, averageBrightness) {
+        this.position = position;
+        this.radius = radius;
+        this.averageBrightness = averageBrightness;
+    }
+
+    let stars = [];
 
     function refresh() {
         canvas.width = window.innerWidth;
