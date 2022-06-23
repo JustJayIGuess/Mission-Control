@@ -217,7 +217,7 @@ body {
 
     width: fit-content;
     padding-left: 3vw;
-    padding-right: 2.5vw;
+    padding-right: 1.5vw;
     padding-top: 1vw;
     padding-bottom: 1vw;
 
@@ -301,6 +301,8 @@ body {
 }
 
 .list-add-input {
+    width:fit-content;
+
     font-family: 'Open Sans';
     font-style: normal;
     font-weight: 800;
