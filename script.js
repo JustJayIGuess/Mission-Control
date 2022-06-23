@@ -3,61 +3,85 @@ Number.prototype.map = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-// Spooky global variables
-let taskStates = [];
-let listCollapsedStates = [];
-
-function addCheckboxListener(element) {
-    taskStates.push(false);
-    let i = taskStates.length - 1;
-
-    element.addEventListener("click", function() {
-        element.style.transition = "all 0.2s"
-        if (taskStates[i]) {
-            element.style.borderColor = "#8679D9";
-            element.style.backgroundColor = "transparent"
-        }
-        else {
-            element.style.borderColor = "#5833A6";
-            element.style.backgroundColor = "#8679D9"
-        }
-        taskStates[i] = !taskStates[i];
-    });
-}
-
-function addListCollapseListener(element) {
-    listCollapsedStates.push(false);
-    let i = listCollapsedStates.length - 1;
-
-    element.addEventListener("click", function() {
-        let group = element.parentElement.getElementsByClassName("list-group")[0];
-        if (listCollapsedStates[i]) {
-            group.style.maxHeight = group.scrollHeight + "px";
-            element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(0deg)"
-        }
-        else {
-            group.style.maxHeight = "0px";
-            element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(-90deg)"
-        }
-
-        // element.style.transition = "all 0.2s";
-        // let children = element.parentElement.getElementsByClassName("list-item");
-        // if (listCollapsedStates[i]) {
-        //     for (let j = 0; j < children.length; j++) {
-        //         children[j].style.maxHeight;
-        //     }
-        // }
-        // else {
-        //     for (let j = 0; j < children.length; j++) {
-        //         children[j].style.display = "none";
-        //         console.log(children[j]);
-        //     }
-        // }
-        listCollapsedStates[i] = !listCollapsedStates[i];
-    });
-}
-
 window.onload = function() {
+    // Spooky global variables
+    let taskStates = [];
+    let listCollapsedStates = [];
+    let todoContent = document.getElementById("todo-content");
+
+    function addCheckboxListener(element) {
+        taskStates.push(false);
+        let i = taskStates.length - 1;
+
+        element.addEventListener("click", function() {
+            element.style.transition = "all 0.2s"
+            if (taskStates[i]) {
+                element.style.borderColor = "#8679D9";
+                element.style.backgroundColor = "transparent"
+            }
+            else {
+                element.style.borderColor = "#5833A6";
+                element.style.backgroundColor = "#8679D9"
+            }
+            taskStates[i] = !taskStates[i];
+        });
+    }
+
+    function addNewTaskEnteredListener(element) {
+        element.addEventListener("keyup", function(e) {
+            // When enter (keycode 13) pressed
+            if (e.keyCode == 13) {
+                // Create new list item
+                const newListItem = document.createElement("div");
+                newListItem.className = "list-item";
+
+                const newCheckbox = document.createElement("div");
+                newCheckbox.className = "checkbox";
+                const newTaskTitle = document.createElement("div");
+                newTaskTitle.className = "task-title";
+                newTaskTitle.innerHTML = element.value;
+
+                newListItem.appendChild(newCheckbox);
+                newListItem.appendChild(newTaskTitle);
+
+                // Add it
+                element.parentElement.parentElement.insertBefore(newListItem, element.parentElement);
+                element.value = "";
+
+                // Update taskStates and stuff
+                addCheckboxListener(newCheckbox);
+                let delta = element.parentElement.parentElement.scrollHeight - parseFloat(element.parentElement.parentElement.style.maxHeight, 10);
+                element.parentElement.parentElement.style.maxHeight = element.parentElement.parentElement.scrollHeight + "px";
+                todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
+            }
+        });
+    }
+
+    function addListCollapseListener(element) {
+        listCollapsedStates.push(false);
+        let i = listCollapsedStates.length - 1;
+
+        element.addEventListener("click", function() {
+            let group = element.parentElement.getElementsByClassName("list-group")[0];
+            let origHeight = parseFloat(group.style.maxHeight, 10);
+            let newHeight;
+            if (listCollapsedStates[i]) {
+                newHeight = group.scrollHeight;
+                element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(0deg)"
+            }
+            else {
+                newHeight = 0;
+                element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(-90deg)"
+            }
+
+            group.style.maxHeight = newHeight + "px";
+
+            let delta = newHeight - origHeight;
+            todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
+            
+            listCollapsedStates[i] = !listCollapsedStates[i];
+        });
+    }
 
     // Task Checkboxes
     let tasks = document.getElementsByClassName("checkbox");
@@ -70,31 +94,7 @@ window.onload = function() {
     let addTaskInputs = document.getElementsByClassName("task-add");
 
     for (let i = 0; i < addTaskInputs.length; i++) {
-        addTaskInputs[i].addEventListener("keyup", function(e) {
-            // When enter (keycode 13) pressed
-            if (e.keyCode == 13) {
-                // Create new list item
-                const newListItem = document.createElement("div");
-                newListItem.className = "list-item";
-
-                const newCheckbox = document.createElement("div");
-                newCheckbox.className = "checkbox";
-                const newTaskTitle = document.createElement("div");
-                newTaskTitle.className = "task-title";
-                newTaskTitle.innerHTML = addTaskInputs[i].value;
-
-                newListItem.appendChild(newCheckbox);
-                newListItem.appendChild(newTaskTitle);
-
-                // Add it
-                addTaskInputs[i].parentElement.parentElement.insertBefore(newListItem, addTaskInputs[i].parentElement);
-                addTaskInputs[i].value = "";
-
-                // Update taskStates and stuff
-                addCheckboxListener(newCheckbox);
-                addTaskInputs[i].parentElement.parentElement.style.maxHeight = addTaskInputs[i].parentElement.parentElement.scrollHeight + "px";
-            }
-        });
+        addNewTaskEnteredListener(addTaskInputs[i]);
     }
 
     // Collapsible lists
@@ -106,6 +106,60 @@ window.onload = function() {
         // Have to update this at beginning for animation to work properly
         listTitles[i].parentElement.getElementsByClassName("list-group")[0].style.maxHeight = listTitles[i].parentElement.getElementsByClassName("list-group")[0].scrollHeight;
     }
+
+    // Add List Button
+    todoContent.style.maxHeight = todoContent.scrollHeight;
+    let addListInput = document.getElementsByClassName("list-add-input")[0];
+    addListInput.addEventListener("keyup", function(e) {
+        if (e.keyCode == 13 && addListInput.value != "") {
+            // <div class="list-wrapper">
+            //     <div class="list-title">
+            //         <img class="dropdown-chevron" src="chevron.png"/>
+            //         Non-School
+            //     </div>
+            //     <div class="list-group">
+            //         <div class="task-add-wrapper">
+            //             <input class="task-add" placeholder="Type a new task here."/>
+            //         </div>
+            //     </div>
+            // </div>
+            const newListWrapper = document.createElement("div");
+            newListWrapper.className = "list-wrapper";
+            const newListTitle = document.createElement("div");
+            newListTitle.className = "list-title";
+            const newDropdownChevron = document.createElement("img");
+            newDropdownChevron.className = "dropdown-chevron";
+            newDropdownChevron.src = "chevron.png";
+            const newListGroup = document.createElement("div");
+            newListGroup.className = "list-group";
+            const newTaskAddWrapper = document.createElement("div");
+            newTaskAddWrapper.className = "task-add-wrapper";
+            const newTaskAddInput = document.createElement("input");
+            newTaskAddInput.className = "task-add";
+            newTaskAddInput.placeholder = "Type a new task here.";
+
+            newListTitle.appendChild(newDropdownChevron);
+            newDropdownChevron.insertAdjacentHTML("afterEnd", addListInput.value);
+
+
+            newTaskAddWrapper.appendChild(newTaskAddInput);
+            newListGroup.appendChild(newTaskAddWrapper);
+
+            newListWrapper.appendChild(newListTitle);
+            newListWrapper.appendChild(newListGroup);
+
+            addListInput.parentElement.parentElement.parentElement.appendChild(newListWrapper)//, addListInput.parentElement.parentElement.nextSibling);
+
+            addListCollapseListener(newListTitle);
+            newListTitle.parentElement.getElementsByClassName("list-group")[0].style.maxHeight = newListTitle.parentElement.getElementsByClassName("list-group")[0].scrollHeight;
+
+            addNewTaskEnteredListener(newTaskAddInput);
+
+            addListInput.value = "";
+
+            todoContent.style.maxHeight = todoContent.scrollHeight;
+        }
+    });
 
     // Stars Background
     let canvas = document.getElementById("backing-canvas");

@@ -33,7 +33,11 @@ body {
     align-items: left;
     justify-content: flex-start;
     padding: 0vw;
-    gap: 14vw;
+    gap: 12vw;
+
+    overflow: hidden;
+    max-height: fit-content;
+    transition: max-height 0.2s ease-out;
 }
 
 .header-bar {
@@ -157,6 +161,17 @@ body {
     flex-grow: 0;
 }
 
+.add-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
 .list-group {
     display: flex;
     flex-direction: column;
@@ -170,6 +185,30 @@ body {
 }
 
 .list-title {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 4.5vw;
+    color: white;
+
+    width: fit-content;
+    padding-left: 3vw;
+    padding-right: 2.5vw;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+
+    border-radius: 1vw;
+
+    background-color: #5833A6;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 3.5vw;
+}
+
+.add-list-title {
     font-family: 'Open Sans';
     font-style: normal;
     font-weight: 800;
@@ -225,7 +264,7 @@ body {
     gap: 6vw;
 }
 
-.list-add {
+.task-add-wrapper {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -261,11 +300,55 @@ body {
     outline: none;
 }
 
+.list-add-input {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 4.5vw;
+    
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.005em;
+    border-radius: 1vw;
+    border: none;
+
+    background-color: #ffffff00;
+    
+    color: #FFFFFF;
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    /* Yucky focus outline begone */
+    outline: none;
+}
+
+.list-add-input:focus {
+    background-color: #ffffff40;
+    transition: 0.2s;
+}
+
 .dropdown-chevron {
     width: 5vw;
     height: auto;
 
     transition: transform 0.2s ease-out;
+}
+
+.add-list-plus {
+    width: 5vw;
+    height: auto;
+}
+
+.list-add-input::placeholder {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 4.5vw;
+    color: white;
 }
 
 .task-add::placeholder {
