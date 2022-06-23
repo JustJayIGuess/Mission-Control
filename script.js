@@ -10,12 +10,12 @@ window.onload = function() {
     let todoContent = document.getElementById("todo-content");
 
     function addCheckboxListener(element) {
-        taskStates.push(false);
+        taskStates.push({state: false, link: element});
         let i = taskStates.length - 1;
 
         element.addEventListener("click", function() {
             element.style.transition = "all 0.2s"
-            if (taskStates[i]) {
+            if (taskStates[i].state) {
                 element.style.borderColor = "#8679D9";
                 element.style.backgroundColor = "transparent"
             }
@@ -23,7 +23,7 @@ window.onload = function() {
                 element.style.borderColor = "#5833A6";
                 element.style.backgroundColor = "#8679D9"
             }
-            taskStates[i] = !taskStates[i];
+            taskStates[i].state = !taskStates[i].state;
         });
     }
 
@@ -58,14 +58,14 @@ window.onload = function() {
     }
 
     function addListCollapseListener(element) {
-        listCollapsedStates.push(false);
+        listCollapsedStates.push({state: false, link: element});
         let i = listCollapsedStates.length - 1;
 
         element.addEventListener("click", function() {
             let group = element.parentElement.getElementsByClassName("list-group")[0];
             let origHeight = parseFloat(group.style.maxHeight, 10);
             let newHeight;
-            if (listCollapsedStates[i]) {
+            if (listCollapsedStates[i].state) {
                 newHeight = group.scrollHeight;
                 element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(0deg)"
             }
@@ -78,8 +78,8 @@ window.onload = function() {
 
             let delta = newHeight - origHeight;
             todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
-            
-            listCollapsedStates[i] = !listCollapsedStates[i];
+
+            listCollapsedStates[i].state = !listCollapsedStates[i].state;
         });
     }
 
