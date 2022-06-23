@@ -363,4 +363,6 @@ body {
     background-color: #ffffff33;
     padding: 0.8vw;
     border-radius: 1.2vw;
+
+    display: none;
 }

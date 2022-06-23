@@ -4,10 +4,11 @@ Number.prototype.map = function (in_min, in_max, out_min, out_max) {
 }
 
 window.onload = function() {
-    // Spooky global variables
+    // Spooky global-ish variables
     let taskStates = [];
     let listCollapsedStates = [];
     let todoContent = document.getElementById("todo-content");
+    let deleteButtons = document.getElementsByClassName("delete-button");
 
     function addCheckboxListener(element) {
         taskStates.push({state: false, link: element});
@@ -42,6 +43,7 @@ window.onload = function() {
                 const newDeleteButton = document.createElement("img");
                 newDeleteButton.src = "delete.png";
                 newDeleteButton.className = "delete-button";
+                newDeleteButton.style.display = "none";
 
                 newTaskTitle.appendChild(newDeleteButton);
                 newDeleteButton.insertAdjacentHTML("beforeBegin", element.value);
@@ -164,6 +166,19 @@ window.onload = function() {
 
             todoContent.style.maxHeight = todoContent.scrollHeight;
         }
+    });
+
+    // Hide delete buttons
+    let editButton = document.getElementsByClassName("profile-pic")[0]; // TODO: Change this
+    for (let i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].style.display = "none";
+    }
+    
+    editButton.addEventListener("click", function() {
+        for (let i = 0; i < deleteButtons.length; i++) {
+            deleteButtons[i].style.display = deleteButtons[i].style.display == "none" ? "block" : "none";
+        }
+        console.log(deleteButtons);
     });
 
     // Stars Background
