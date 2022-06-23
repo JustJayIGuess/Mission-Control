@@ -3,6 +3,8 @@ Number.prototype.map = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+let isInEditMode = false;
+
 window.onload = function() {
     // Spooky global-ish variables
     let taskStates = [];
@@ -144,6 +146,7 @@ window.onload = function() {
             const newTaskAddInput = document.createElement("input");
             newTaskAddInput.className = "task-add";
             newTaskAddInput.placeholder = "Type a new task here.";
+            newTaskAddInput.tabIndex = "-1";
 
             newListTitle.appendChild(newDropdownChevron);
             newDropdownChevron.insertAdjacentHTML("afterEnd", addListInput.value);
