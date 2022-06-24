@@ -15,7 +15,8 @@ window.onload = function() {
     let taskStates = [];
     let listCollapsedStates = [];
     let todoContent = document.getElementById("todo-content");
-    let deleteButtons = document.getElementsByClassName("delete-button");
+    let taskDeleteButtons = document.getElementsByClassName("task-delete-button");
+    let listDeleteButtons = document.getElementsByClassName("list-delete-button");
     let tasks = document.getElementsByClassName("checkbox");
 
     function addCheckboxListener(element) {
@@ -50,7 +51,7 @@ window.onload = function() {
                 newTaskTitle.className = "task-title";
                 const newDeleteButton = document.createElement("img");
                 newDeleteButton.src = "delete.png";
-                newDeleteButton.className = "delete-button";
+                newDeleteButton.className = "task-delete-button";
                 newDeleteButton.style.display = isInEditMode ? "block" : "none";
 
                 newTaskTitle.appendChild(newDeleteButton);
@@ -65,7 +66,7 @@ window.onload = function() {
 
                 // Update taskStates and stuff
                 addCheckboxListener(newCheckbox);
-                addDeletionListener(newDeleteButton);
+                addTaskDeletionListener(newDeleteButton);
                 let delta = element.parentElement.parentElement.scrollHeight - parseFloat(element.parentElement.parentElement.style.maxHeight, 10);
                 element.parentElement.parentElement.style.maxHeight = element.parentElement.parentElement.scrollHeight + "px";
                 todoContent.style.maxHeight = todoContent.scrollHeight + delta + "px";
@@ -78,16 +79,16 @@ window.onload = function() {
         let i = listCollapsedStates.length - 1;
 
         element.addEventListener("click", function() {
-            let group = element.parentElement.getElementsByClassName("list-group")[0];
+            let group = element.parentElement.parentElement.getElementsByClassName("list-group")[0];
             let origHeight = parseFloat(group.style.maxHeight, 10);
             let newHeight;
             if (listCollapsedStates[i].state) {
                 newHeight = group.scrollHeight;
-                element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(0deg)"
+                element.parentElement.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(0deg)"
             }
             else {
                 newHeight = 0;
-                element.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(-90deg)"
+                element.parentElement.getElementsByClassName("dropdown-chevron")[0].style.transform = "rotate(-90deg)"
             }
 
             group.style.maxHeight = newHeight + "px";
@@ -99,7 +100,7 @@ window.onload = function() {
         });
     }
 
-    function addDeletionListener(element) {
+    function addTaskDeletionListener(element) {
         element.addEventListener("click", function (e) {
             const j = taskStates.indexOf(e.target);
             const group = e.target.parentElement.parentElement.parentElement;
@@ -109,6 +110,16 @@ window.onload = function() {
             group.style.maxHeight = group.scrollHeight;
             todoContent.style.maxHeight = todoContent.scrollHeight + "px";
             taskStates.splice(j, 1);
+        });
+    }
+
+    function addListDeletionListener(element) {
+        element.addEventListener("click", function (e) {
+            const list = e.target.parentElement.parentElement;
+
+            list.remove();
+
+            todoContent.style.maxHeight = todoContent.scrollHeight + "px";
         });
     }
 
@@ -126,12 +137,12 @@ window.onload = function() {
 
     // Collapsible lists
 
-    let listTitles = document.getElementsByClassName("list-title");
+    let listCollapseAreas = document.getElementsByClassName("list-collapse");
 
-    for (let i = 0; i < listTitles.length; i++) {
-        addListCollapseListener(listTitles[i]);
+    for (let i = 0; i < listCollapseAreas.length; i++) {
+        addListCollapseListener(listCollapseAreas[i]);
         // Have to update this at beginning for animation to work properly
-        listTitles[i].parentElement.getElementsByClassName("list-group")[0].style.maxHeight = listTitles[i].parentElement.getElementsByClassName("list-group")[0].scrollHeight;
+        listCollapseAreas[i].parentElement.parentElement.getElementsByClassName("list-group")[0].style.maxHeight = listCollapseAreas[i].parentElement.parentElement.getElementsByClassName("list-group")[0].scrollHeight;
     }
 
     // Add List Button
@@ -141,8 +152,11 @@ window.onload = function() {
         if (e.keyCode == 13 && addListInput.value != "") {
             // <div class="list-wrapper">
             //     <div class="list-title">
-            //         <img class="dropdown-chevron" src="chevron.png"/>
-            //         Non-School
+            //         <div class="list-collapse">
+            //             <img class="dropdown-chevron" src="chevron.png"/>
+            //             Non-School
+            //         </div>
+            //         <img class="list-delete-button" src="delete.png" alt="">
             //     </div>
             //     <div class="list-group">
             //         <div class="task-add-wrapper">
@@ -150,25 +164,43 @@ window.onload = function() {
             //         </div>
             //     </div>
             // </div>
+
+            //#region Create Elements
             const newListWrapper = document.createElement("div");
             newListWrapper.className = "list-wrapper";
+
             const newListTitle = document.createElement("div");
             newListTitle.className = "list-title";
+
+            const newListCollapse = document.createElement("div");
+            newListCollapse.className = "list-collapse";
+
             const newDropdownChevron = document.createElement("img");
             newDropdownChevron.className = "dropdown-chevron";
             newDropdownChevron.src = "chevron.png";
+
+            const newDeleteButton = document.createElement("img");
+            newDeleteButton.className = "task-delete-button";
+            newDeleteButton.src = "delete.png";
+
             const newListGroup = document.createElement("div");
             newListGroup.className = "list-group";
+
             const newTaskAddWrapper = document.createElement("div");
             newTaskAddWrapper.className = "task-add-wrapper";
+
             const newTaskAddInput = document.createElement("input");
             newTaskAddInput.className = "task-add";
             newTaskAddInput.placeholder = "Type a new task here.";
             newTaskAddInput.tabIndex = "-1";
 
-            newListTitle.appendChild(newDropdownChevron);
-            newDropdownChevron.insertAdjacentHTML("afterEnd", addListInput.value);
+            //#endregion
 
+
+            newListCollapse.appendChild(newDropdownChevron);
+            newDropdownChevron.insertAdjacentHTML("afterEnd", addListInput.value);
+            newListTitle.appendChild(newListCollapse);
+            newListTitle.appendChild(newDeleteButton);
 
             newTaskAddWrapper.appendChild(newTaskAddInput);
             newListGroup.appendChild(newTaskAddWrapper);
@@ -178,33 +210,44 @@ window.onload = function() {
 
             addListInput.parentElement.parentElement.parentElement.appendChild(newListWrapper)//, addListInput.parentElement.parentElement.nextSibling);
 
-            addListCollapseListener(newListTitle);
+            addListCollapseListener(newListCollapse);
             newListTitle.parentElement.getElementsByClassName("list-group")[0].style.maxHeight = newListTitle.parentElement.getElementsByClassName("list-group")[0].scrollHeight;
 
             addNewTaskEnteredListener(newTaskAddInput);
 
+            addListDeletionListener(newDeleteButton);
+
             addListInput.value = "";
 
-            todoContent.style.maxHeight = todoContent.scrollHeight;
+            todoContent.style.maxHeight = todoContent.scrollHeight + "px";
         }
     });
 
-    // Hide delete buttons
+    // Toggle edit mode behaviour
     let editButton = document.getElementsByClassName("profile-pic")[0]; // TODO: Change this
-    for (let i = 0; i < deleteButtons.length; i++) {
-        deleteButtons[i].style.display = "none";
+    for (let i = 0; i < taskDeleteButtons.length; i++) {
+        taskDeleteButtons[i].style.display = "none";
+    }
+    for (let i = 0; i < listDeleteButtons.length; i++) {
+        listDeleteButtons[i].style.display = "none";
     }
     
     editButton.addEventListener("click", function() {
-        for (let i = 0; i < deleteButtons.length; i++) {
-            deleteButtons[i].style.display = isInEditMode ? "none" : "block";
+        for (let i = 0; i < taskDeleteButtons.length; i++) {
+            taskDeleteButtons[i].style.display = isInEditMode ? "none" : "block";
+        }
+        for (let i = 0; i < listDeleteButtons.length; i++) {
+            listDeleteButtons[i].style.display = isInEditMode ? "none" : "block";
         }
         isInEditMode = !isInEditMode
     });
 
     // Delete items
-    for (let i = 0; i < deleteButtons.length; i++) {
-        addDeletionListener(deleteButtons[i]);
+    for (let i = 0; i < taskDeleteButtons.length; i++) {
+        addTaskDeletionListener(taskDeleteButtons[i]);
+    }
+    for (let i = 0; i < listDeleteButtons.length; i++) {
+        addListDeletionListener(listDeleteButtons[i]);
     }
 
     // Stars Background
