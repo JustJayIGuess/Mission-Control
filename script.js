@@ -182,6 +182,7 @@ window.onload = function() {
             const newDeleteButton = document.createElement("img");
             newDeleteButton.className = "task-delete-button";
             newDeleteButton.src = "delete.png";
+            newDeleteButton.style.display = isInEditMode ? "block" : "none";
 
             const newListGroup = document.createElement("div");
             newListGroup.className = "list-group";
